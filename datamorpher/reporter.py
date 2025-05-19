@@ -27,6 +27,8 @@ def build_report(
         "\n".join(f"- {c}: {m}" for c, m in clean_info["imputed"].items())
         or "None"
     )
+    transformations = clean_info.get("transformations", {})
+    invalid = clean_info.get("invalid", {})
     report = f"""# DataMorpher Report
 
 ## Summary
@@ -39,4 +41,14 @@ def build_report(
 ## Column Types
 {table}
 """
+    if transformations:
+        report += "\n\n## Transformations appliquées\n"
+        for col, changes in transformations.items():
+            report += f"### Colonne '{col}'\n"
+            for change in changes:
+                report += f"- {change}\n"
+            if invalid.get(col):
+                report += (
+                    f"- {invalid[col]} valeurs invalides non récupérables\n"
+                )
     return report

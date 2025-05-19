@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Dict
+from typing import Dict, Sequence
 
 import pandas as pd
 from pandas.api.types import infer_dtype
@@ -10,11 +10,18 @@ from pandas.api.types import infer_dtype
 
 def clean_data(df: pd.DataFrame) -> tuple[pd.DataFrame, Dict[str, object]]:
     """Clean a DataFrame and report actions taken."""
-    info: Dict[str, object] = {"duplicates": 0, "imputed": {}, "invalid": {}}
+    info: Dict[str, object] = {
+        "duplicates": 0,
+        "imputed": {},
+        "invalid": {},
+        "transformations": {},
+    }
 
     before = len(df)
     df = df.drop_duplicates()
     info["duplicates"] = before - len(df)
+
+    transformations: Dict[str, list[str]] = info["transformations"]
 
     # Make a copy to avoid SettingWithCopyWarning
     df = df.copy()
@@ -23,14 +30,18 @@ def clean_data(df: pd.DataFrame) -> tuple[pd.DataFrame, Dict[str, object]]:
         dtype = infer_dtype(df[col], skipna=True)
         series = df[col]
         if dtype in {"string", "mixed"}:
-            validated, invalid = _validate_numeric(series)
+            validated, invalid = _validate_numeric(
+                series, col, transformations
+            )
             if validated is not None:
                 df[col] = validated
                 if invalid:
                     info["invalid"][col] = invalid
                 dtype = "floating"
             else:
-                validated, invalid = _validate_dates(series)
+                validated, invalid = _validate_dates(
+                    series, column=col, transformations=transformations
+                )
                 if validated is not None:
                     df[col] = validated
                     if invalid:
@@ -39,13 +50,21 @@ def clean_data(df: pd.DataFrame) -> tuple[pd.DataFrame, Dict[str, object]]:
 
         if df[col].isna().any():
             if dtype in {"integer", "floating"}:
-                df[col] = df[col].fillna(df[col].mean())
+                value = df[col].mean()
+                df[col] = df[col].fillna(value)
                 info["imputed"][col] = "mean"
+                transformations.setdefault(col, []).append(
+                    f"NaN -> {value:.2f} (mean)"
+                )
             elif dtype in {"string", "categorical", "boolean"}:
                 mode = df[col].mode(dropna=True)
                 if not mode.empty:
-                    df[col] = df[col].fillna(mode.iloc[0])
+                    value = mode.iloc[0]
+                    df[col] = df[col].fillna(value)
                     info["imputed"][col] = "mode"
+                    transformations.setdefault(col, []).append(
+                        f"NaN -> {value} (mode)"
+                    )
     return df, info
 
 
@@ -97,22 +116,73 @@ def _words_to_num(text: str | None) -> float | None:
     return float(value)
 
 
-def _validate_numeric(series: pd.Series) -> tuple[pd.Series | None, int]:
+def _validate_numeric(
+    series: pd.Series,
+    column: str | None = None,
+    transformations: Dict[str, list[str]] | None = None,
+) -> tuple[pd.Series | None, int]:
     """Return numeric series if convertible and count invalid entries."""
     converted = pd.to_numeric(series, errors="coerce")
+
     if converted.isna().any():
         as_words = series.where(converted.isna()).apply(_words_to_num)
+        if transformations is not None and column is not None:
+            for idx, val in as_words.dropna().items():
+                transformations.setdefault(column, []).append(
+                    f"{series[idx]} -> {val}"
+                )
         converted.update(as_words)
+
+    if converted.isna().any():
+        mask = converted.isna()
+        extracted = (
+            series.where(mask)
+            .where(~series.str.contains(r"[/-]", na=False))
+            .str.extract(r"(\d+\.?\d*)")[0]
+        )
+        extracted_numeric = pd.to_numeric(extracted, errors="coerce")
+        if transformations is not None and column is not None:
+            for idx, val in extracted_numeric.dropna().items():
+                transformations.setdefault(column, []).append(
+                    f"{series[idx]} -> {val}"
+                )
+        converted.update(extracted_numeric)
+
     if converted.notna().sum() == 0:
         return None, 0
+
     invalid = int((converted.isna() & series.notna()).sum())
     return converted, invalid
 
 
-def _validate_dates(series: pd.Series) -> tuple[pd.Series | None, int]:
+def _validate_dates(
+    series: pd.Series,
+    formats: Sequence[str] | None = None,
+    *,
+    column: str | None = None,
+    transformations: Dict[str, list[str]] | None = None,
+) -> tuple[pd.Series | None, int]:
     """Return series of ISO formatted dates if convertible."""
-    parsed = pd.to_datetime(series, errors="coerce")
+    if formats is None:
+        formats = ["%Y-%m-%d", "%d/%m/%Y", "%m/%d/%Y", "%Y/%m/%d"]
+
+    parsed = pd.Series(pd.NaT, index=series.index)
+    for fmt in formats:
+        parsed_try = pd.to_datetime(series, errors="coerce", format=fmt)
+        parsed = parsed.fillna(parsed_try)
+
     if parsed.notna().sum() == 0:
         return None, 0
+
+    if transformations is not None and column is not None:
+        for idx in series.index:
+            if pd.isna(parsed[idx]) or pd.isna(series[idx]):
+                continue
+            formatted = parsed[idx].strftime("%Y-%m-%d")
+            if str(series[idx]) != formatted:
+                transformations.setdefault(column, []).append(
+                    f"{series[idx]} -> {formatted}"
+                )
+
     invalid = int(parsed.isna().sum())
     return parsed.dt.strftime("%Y-%m-%d"), invalid
