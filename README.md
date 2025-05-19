@@ -130,7 +130,7 @@ pytest
 
 ### Linting
 ```bash
-ruff .
+ruff check .
 ```
 
 ### Contributing
