@@ -16,6 +16,9 @@ def clean_data(df: pd.DataFrame) -> tuple[pd.DataFrame, Dict[str, object]]:
     df = df.drop_duplicates()
     info["duplicates"] = before - len(df)
 
+    # Make a copy to avoid SettingWithCopyWarning
+    df = df.copy()
+    
     for col in df.columns:
         dtype = infer_dtype(df[col], skipna=True)
         if df[col].isna().any():
