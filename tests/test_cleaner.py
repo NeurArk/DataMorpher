@@ -10,3 +10,17 @@ def test_cleaning_removes_duplicates_and_imputes() -> None:
     assert info["imputed"] == {"a": "mean", "b": "mode"}
     assert len(cleaned) == 2
     assert not cleaned.isna().any().any()
+
+
+def test_numeric_and_date_validation() -> None:
+    df = pd.DataFrame(
+        {
+            "num": ["1", "twenty-eight", "8000foo0"],
+            "date": ["2020-01-01", "invalid_date", "2021-02-03"],
+        }
+    )
+    cleaned, info = clean_data(df)
+
+    assert info["invalid"] == {"num": 1, "date": 1}
+    assert cleaned.loc[1, "num"] == 28
+    assert cleaned["date"].isna().sum() == 1

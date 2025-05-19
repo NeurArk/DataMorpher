@@ -23,15 +23,16 @@ def build_report(
         headers=["Column", "Detected Type"],
         tablefmt="github",
     )
-    imputed = "\n".join(
-        f"- {c}: {m}" for c, m in clean_info["imputed"].items()
-    ) or "None"
+    imputed = (
+        "\n".join(f"- {c}: {m}" for c, m in clean_info["imputed"].items())
+        or "None"
+    )
     report = f"""# DataMorpher Report
 
 ## Summary
 - Input: {input_path.name} ({rows_in} rows)
 - Output: {output_path.name} ({rows_out} rows)
-- Duplicates removed: {clean_info['duplicates']}
+- Duplicates removed: {clean_info["duplicates"]}
 - Values imputed:\n{imputed}
 - Duration: {duration:.2f}s
 
