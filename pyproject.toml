@@ -3,7 +3,7 @@ name = "datamorpher"
 version = "0.1.0"
 description = "Data conversion and cleaning utility with CLI and Streamlit UI"
 authors = [ { name = "DataMorpher" } ]
-requires-python = ">=3.12"
+requires-python = ">=3.11"
 readme = "README.md"
 license = { text = "MIT" }
 dependencies = [
