@@ -20,16 +20,14 @@ class convert:
         if suffix in {".xlsx", ".xls"}:
             return pd.read_excel(path)
         if suffix == ".json":
-            try:
-                return pd.read_json(path, lines=True)
-            except ValueError:
-                return pd.read_json(path)
+            return _read_json(path)
         raise ValueError(f"Unsupported input format: {path.suffix}")
 
     @staticmethod
     def write(df: pd.DataFrame, path: Path) -> None:
         suffix = path.suffix.lower()
         if suffix == ".csv":
+            df = _flatten(df)
             df.to_csv(path, index=False)
         elif suffix in {".xlsx", ".xls"}:
             df.to_excel(path, index=False)
@@ -52,3 +50,24 @@ class convert:
 def _looks_like_date(series: pd.Series) -> bool:
     sample = series.dropna().astype(str).head(10)
     return sample.str.match(r"\d{4}-\d{2}-\d{2}").all()
+
+
+def _read_json(path: Path) -> pd.DataFrame:
+    """Return DataFrame from JSON, auto-detecting newline-delimited format."""
+    with path.open("r", encoding="utf-8") as f:
+        start = f.read(1024)
+    text = start.lstrip()
+    if text.startswith("["):
+        return pd.read_json(path)
+    return pd.read_json(path, lines=True)
+
+
+def _flatten(df: pd.DataFrame) -> pd.DataFrame:
+    """Flatten nested columns if present."""
+    has_nested = any(
+        df[col].map(lambda x: isinstance(x, (dict, list))).any()
+        for col in df.columns
+    )
+    if has_nested:
+        df = pd.json_normalize(df.to_dict(orient="records"))
+    return df

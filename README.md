@@ -10,6 +10,8 @@ A compact Python utility for seamless data conversion and cleaning, featuring bo
 - **Multi-format Support**: Convert between CSV, Excel (.xlsx/.xls), and JSON formats
 - **Automatic Type Detection**: Intelligently identifies numeric, categorical, date, and boolean columns
 - **Data Cleaning**: Remove duplicates and impute missing values
+- **Smart JSON Detection**: Handles standard and newline-delimited JSON
+- **Robust Validation**: Cleans malformed numbers and dates
 - **Detailed Reports**: Generate Markdown reports with conversion statistics
 - **Dual Interface**: Choose between CLI for power users or Streamlit web app for non-technical users
 
@@ -93,6 +95,7 @@ When enabled, DataMorpher performs:
   - Categorical columns: Mode (most frequent value)
   - Date columns: Left as missing
   - Boolean columns: Mode
+  - Invalid values reported for review
 
 ## Conversion Report
 
