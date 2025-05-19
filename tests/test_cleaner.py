@@ -21,6 +21,18 @@ def test_numeric_and_date_validation() -> None:
     )
     cleaned, info = clean_data(df)
 
-    assert info["invalid"] == {"num": 1, "date": 1}
+    assert info["invalid"] == {"date": 1}
     assert cleaned.loc[1, "num"] == 28
+    assert cleaned.loc[2, "num"] == 8000
     assert cleaned["date"].isna().sum() == 1
+
+
+def test_date_format_variants() -> None:
+    df = pd.DataFrame(
+        {
+            "date": ["2020-01-02", "03/04/2021", "05/06/2022", "2020/07/08"],
+        }
+    )
+    cleaned, _ = clean_data(df)
+    expected = ["2020-01-02", "2021-04-03", "2022-06-05", "2020-07-08"]
+    assert list(cleaned["date"]) == expected

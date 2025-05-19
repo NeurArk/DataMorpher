@@ -96,6 +96,8 @@ When enabled, DataMorpher performs:
   - Date columns: Left as missing
   - Boolean columns: Mode
   - Invalid values reported for review
+- **Smart Parsing**: Extracts numbers from corrupted strings (e.g. `"8000foo0" -> 8000`)
+- **Date Formats**: Supports `%Y-%m-%d`, `%d/%m/%Y`, `%m/%d/%Y`, and `%Y/%m/%d`
 
 ## Conversion Report
 
@@ -105,6 +107,7 @@ Each conversion generates a Markdown report containing:
 - Values imputed per column
 - Detected data types
 - Total execution time
+- Detailed transformations of cleaned values
 
 Example report snippet:
 ```markdown
@@ -122,6 +125,15 @@ Example report snippet:
 - OrderDate: date
 - Amount: numeric
 - Status: categorical
+```
+
+The report also lists transformations applied, for example:
+
+```markdown
+## Transformations appliquées
+### Colonne 'salary'
+- "8000foo0" -> 8000 (nombre extrait)
+- NaN -> 76166.67 (mean)
 ```
 
 ## Development
