@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-import re
 from pathlib import Path
-from typing import Dict, Any, List
+from typing import Dict
 
 import pandas as pd
 
@@ -133,7 +132,7 @@ def _infer_column_type(df: pd.DataFrame, col_name: str) -> str:
             if numeric_values.dropna().apply(lambda x: float(x).is_integer()).all():
                 return "integer"
             return "floating"
-        except:
+        except Exception:
             pass
 
     # Currency detection
@@ -185,11 +184,13 @@ def _refine_inferred_types(df: pd.DataFrame, types: Dict[str, str]) -> Dict[str,
                 refined_types[col] = "date"
         
         # Better location/address detection
-        if detected_type == "string" and any(loc_term in col_lower for loc_term in ["location", "address", "city", "country", "street"]):
+        location_terms = ["location", "address", "city", "country", "street"]
+        if detected_type == "string" and any(loc_term in col_lower for loc_term in location_terms):
             refined_types[col] = "location"
         
         # Identify product names - but only for non-test columns
-        if detected_type == "string" and col != "product_name" and any(term in col_lower for term in ["product", "item", "model"]):
+        product_terms = ["product", "item", "model"]
+        if detected_type == "string" and col != "product_name" and any(term in col_lower for term in product_terms):
             # Check for patterns typically found in product names
             sample = series.dropna().astype(str).head(20)
             product_patterns = [

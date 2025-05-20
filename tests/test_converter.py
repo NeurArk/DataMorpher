@@ -3,7 +3,11 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from datamorpher.converter import convert, _infer_column_type, _refine_inferred_types
+from datamorpher.converter import (
+    _infer_column_type,
+    _refine_inferred_types,
+    convert,
+)
 
 
 def test_csv_to_excel(tmp_path: Path) -> None:

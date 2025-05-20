@@ -21,8 +21,10 @@ dev = [
 [tool.pytest.ini_options]
 addopts = "-vv"
 [tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
 select = ["E", "F", "I"]
-line-length = 79
 
 [build-system]
 requires = ["setuptools>=61"]

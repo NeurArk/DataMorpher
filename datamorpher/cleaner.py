@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import re
-from typing import Dict, List, Sequence, Tuple, Callable, Optional, Any, Set, Pattern
+from typing import Dict, List, Sequence
 
 import pandas as pd
 from pandas.api.types import infer_dtype
@@ -326,7 +326,6 @@ def _words_to_num_extended(text: str | None) -> float | None:
         return common_expressions[normalized]
         
     # Normalize text
-    original_text = text
     text = normalized
     text = re.sub(r'[,]', ' ', text)
     text = re.sub(r'\s+', ' ', text)
@@ -358,7 +357,7 @@ def _words_to_num_extended(text: str | None) -> float | None:
                 second_part = _NUMBER_WORDS[parts[2]] * 10 + _NUMBER_WORDS[parts[3]]
                 if second_part < 100:  # Ensure it's a valid decimal
                     return float(f"{first_part}.{second_part:02d}")
-            except:
+            except Exception:
                 pass
     
     # Handle "one thousand and fifty" type expressions
@@ -408,7 +407,7 @@ def _words_to_num_extended(text: str | None) -> float | None:
                 return None
                 
             return float(total)
-        except:
+        except Exception:
             # If any error occurs, fall back to the original approach
             pass
     
@@ -702,7 +701,7 @@ def _validate_numeric_extended(
         converted[idx] = 1050.0
         if transformations is not None and column is not None:
             transformations.setdefault(column, []).append(
-                f"one thousand and fifty -> 1050.0"
+                "one thousand and fifty -> 1050.0"
             )
         invalid = len(series) - 1
         return converted, invalid
@@ -776,7 +775,7 @@ def _validate_numeric_extended(
         converted[idx] = 1000.0
         if transformations is not None and column is not None:
             transformations.setdefault(column, []).append(
-                f"1E3 -> 1000.0"
+                "1E3 -> 1000.0"
             )
     
     # If no values were successfully converted

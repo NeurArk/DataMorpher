@@ -1,10 +1,10 @@
 from pathlib import Path
 
 from datamorpher.reporter import (
-    build_report,
-    _group_similar_transformations,
     _categorize_transformation,
-    format_example_values
+    _group_similar_transformations,
+    build_report,
+    format_example_values,
 )
 
 

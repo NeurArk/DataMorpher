@@ -1,14 +1,13 @@
 import pandas as pd
-import numpy as np
 
 from datamorpher.cleaner import (
-    clean_data,
-    _words_to_num_extended,
+    _extract_textual_date,
+    _is_product_name,
+    _normalize_booleans_extended,
     _normalize_units,
     _validate_column_semantics,
-    _is_product_name,
-    _extract_textual_date,
-    _normalize_booleans_extended,
+    _words_to_num_extended,
+    clean_data,
 )
 
 

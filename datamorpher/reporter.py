@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict, List, Any, Tuple
+from typing import Any, Dict, List
 
 from tabulate import tabulate
 
@@ -123,7 +123,8 @@ def _categorize_transformation(change: str) -> str:
     
     # Date formatting
     if "->" in change and any(fmt in change for fmt in ["-", "/"]):
-        if any(month in change.lower() for month in ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]):
+        months = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
+        if any(month in change.lower() for month in months):
             return "Date Format Standardization"
         
         # Look for date patterns
@@ -131,7 +132,8 @@ def _categorize_transformation(change: str) -> str:
             return "Date Format Standardization"
     
     # Text to number conversion
-    if any(word in change.lower() for word in ["one", "two", "three", "four", "five", "ten", "twenty", "thirty", "hundred", "thousand"]):
+    number_words = ["one", "two", "three", "four", "five", "ten", "twenty", "thirty", "hundred", "thousand"]
+    if any(word in change.lower() for word in number_words):
         return "Text to Number Conversion"
     
     # Numeric extraction
