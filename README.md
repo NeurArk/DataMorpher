@@ -9,7 +9,7 @@ A compact Python utility for seamless data conversion and cleaning, featuring bo
 ### Core Capabilities
 - **Multi-format Support**: Convert between CSV, Excel (.xlsx/.xls), and JSON formats
 - **Automatic Type Detection**: Intelligently identifies numeric, categorical, date, and boolean columns
-- **Data Cleaning**: Remove duplicates and impute missing values
+- **Data Cleaning**: Remove duplicates, detect anomalies, and impute missing values
 - **Smart JSON Detection**: Handles standard and newline-delimited JSON
 - **Robust Validation**: Cleans malformed numbers and dates
 - **Detailed Reports**: Generate Markdown reports with conversion statistics
@@ -90,14 +90,17 @@ pyproject.toml         # Project configuration
 
 When enabled, DataMorpher performs:
 - **Duplicate Removal**: Eliminates exact row duplicates
+- **Anomaly Detection**: Detects and reports issues like negative values in stock, infinity values, etc.
 - **Missing Value Imputation**:
-  - Numeric columns: Mean value
+  - Numeric columns: Median value
   - Categorical columns: Mode (most frequent value)
   - Date columns: Left as missing
   - Boolean columns: Mode
-  - Invalid values reported for review
-- **Smart Parsing**: Extracts numbers from corrupted strings (e.g. `"8000foo0" -> 8000`)
-- **Date Formats**: Supports `%Y-%m-%d`, `%d/%m/%Y`, `%m/%d/%Y`, and `%Y/%m/%d`
+- **Smart Parsing**: 
+  - Extracts numbers from corrupted strings (e.g. `"8000foo0" -> 8000`)
+  - Converts textual expressions (e.g. `"four hundred fifty" -> 450`)
+  - Handles special patterns like `"95ABC.50" -> 95.50`
+- **Date Formats**: Supports multiple formats including `%Y-%m-%d`, `%d/%m/%Y`, `%m/%d/%Y`, `%Y/%m/%d` and textual formats like "March 20 2023"
 
 ## Conversion Report
 
@@ -108,6 +111,7 @@ Each conversion generates a Markdown report containing:
 - Detected data types
 - Total execution time
 - Detailed transformations of cleaned values
+- Detected anomalies and warnings
 
 Example report snippet:
 ```markdown
@@ -127,19 +131,23 @@ Example report snippet:
 - Status: categorical
 ```
 
-The report also lists transformations applied, for example:
+The report also lists transformations applied and anomalies detected, for example:
 
 ```markdown
-## Transformations appliquées
-### Colonne 'salary'
-- "8000foo0" -> 8000 (nombre extrait)
-- NaN -> 76166.67 (mean)
+## Applied Transformations
+### Column 'price'
+- $49.99 -> 49.99 (currency conversion)
+- 200$ -> 200.0 (currency conversion)
+
+## Notes and Warnings
+- Column 'stock' contains 1 negative value(s)
+- Column 'stock' contains 1 infinite value(s)
 ```
 
 ## Sample Data
 
-A messy CSV file is included in `sample_data/messy_data.csv` to test the
-cleaning features and edge cases.
+A messy CSV file is included in `sample_data/test_messy_data_improved.csv` to test the
+cleaning features, anomaly detection, and edge cases.
 
 ## Development
 
