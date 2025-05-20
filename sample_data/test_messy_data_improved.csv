@@ -1,0 +1,67 @@
+product_id,product_name,category,price,stock,rating,last_updated,store_location,sales_q1,sales_q2,is_active
+1001,Smartphone X Pro,Electronics,599.99,120,4.7,2023-01-15,New York,521,680,TRUE
+1001,Smartphone X Pro,Electronics,599.99,120,4.7,2023-01-15,New York,521,680,TRUE
+1002,Deluxe Coffee Maker,Kitchen,89.95,65,4.2,2022-11-30,Los Angeles,310,275,true
+1003,Ergonomic Chair,Furniture,249.5,32,4.8,2023/02/10,Chicago,189,210,yes
+1004,Wireless Headphones,Electronics,129abc.99,78,4.5,2023-03-05,Boston,425,512,1
+1005,Professional Blender,Kitchen,179.99,42,4.6,2022-12-18,San Francisco,262,315,True
+1006,Gaming Console XS,Electronics,four hundred fifty,15,4.9,invalid_date,Seattle,198,265,T
+1007,Running Shoes Ultra,Sports,89.99,95,4.3,2023-01-28,Denver,501,589,yes
+1008,,Clothing,59.95,112,3.9,2023-02-14,Atlanta,431,508,true
+1009,Yoga Mat Premium,Sports,35.49,80,4.1,2022-10-25,Miami,289,345,inactive
+1010,Stainless Steel Cookware,Kitchen,149.99,,4.4,2023-04-02,Dallas,185,NOT_AVAILABLE,1
+1011,Smart Watch Series 5,Electronics,329.99,50,four point eight,2022-11-12,Phoenix,376,420,TRUE
+1012,Desk Lamp LED,Home,45.75,108,3.7,20th Feb 2023,Philadelphia,203,241,no
+1013,Winter Jacket,Clothing,120.5,67,3.5,2023-01-19,Houston,198,154,FALSE
+1014,Fitness Tracker,Electronics,79.99,92,,2022-09-30,San Diego,480,527,True
+1015,Portable Speaker,Electronics,65.99,85,4.2,2023-03-15,Chicago,355,421,yes
+1016,Tablet Pro 11,Electronics,899.99,35,4.9,2023-02-28,New York,175,232,TRUE
+1017,Coffee Table Modern,Furniture,239.5,23,3.8,2022-12-05,Seattle,76,98,1
+1018,Mountain Bike 29",Sports,549.99,12,5.0,2023-01-08,Denver,56,89,yes
+1019,Kitchen Mixer,Kitchen,129.95,45,4.4,2022-11-22,Boston,198,267,TRUE
+1020,Hiking Boots,Sports,95ABC.50,72,4.1,2023-04-05,Portland,234,0,true
+1021,Office Desk Large,Furniture,359.99,18,4.2,2023-01-11,Chicago,45,67,yes
+1022,Wireless Mouse,Electronics,twenty five,120,3.9,2022-12-08,Los Angeles,312,387,1
+1023,Electric Toothbrush,Health & Beauty,59.99,90,four point six,2023-02-18,Miami,276,301,TRUE
+1024,Air Purifier,Home,199.99,38,4.3,2022-10-15,,167,205,yes
+1025,Protein Powder 2kg,Health & Beauty,49.99,105,3.7,01/15/2023,Phoenix,398,461,true
+1026,E-reader Paperlight,Electronics,129.99,55,4.5,2023-03-12,Seattle,215,286,TRUE
+1027,Sunglasses Polarized,Fashion,79.95,82,3.8,2023-01-25,Miami,301,405,yes
+1028,Bath Towel Set,Home,34.99,150,,2022-11-20,Houston,189,218,1
+1029,Gaming Mouse,Electronics,49.99,98,4.7,2023-02-08,Chicago,405,512,TRUE
+1030,Bluetooth Speaker Mini,Electronics,39.95,110,4.2,2023-01-30,New York,523,612,yes
+1031,Tennis Racket Pro,Sports,135.5,42,4.4,2022-12-15,Los Angeles,156,200,true
+1032,Chef's Knife Set,Kitchen,189.99,28,4.8,2023-03-08,Boston,98,145,1
+1033,Bed Sheets Premium,Home,79.95,75,4.1,2023/01/18,Dallas,210,245,TRUE
+1034,Dumbbell Set 20kg,Sports,119.99,35,4.3,2022-11-28,Chicago,124,176,yes
+1035,Wooden Dining Chair,Furniture,89.5,60,,2023-02-20,Denver,187,235,true
+1036,Power Bank 20000mAh,Electronics,thirty five dollars,142,4.2,2023-01-05,Seattle,480,586,1
+1037,Hair Dryer Professional,Health & Beauty,65.99,48,4.0,2022-10-12,Phoenix,204,235,TRUE
+1038,Digital Camera 24MP,Electronics,599.99,20,4.8,March 15 2023,San Francisco,87,105,yes
+1039,Vacuum Cleaner Robot,Home,299ABC.95,32,four-point-five,2023-02-25,Chicago,124,156,true
+1040,Running Shorts,Sports,29.99,180,3.7,2022-12-10,New York,320,367,1
+1041,Microwave Oven,Kitchen,189.99,40,4.1,2023-01-22,,156,178,TRUE
+1042,Backpack Waterproof,Travel,75.99,85,,2022-11-15,Boston,267,310,yes
+1043,,Beauty,49.99,60,3.9,2023-02-15,Los Angeles,189,222,true
+1044,Indoor Plant Monstera,Home,39.95,45,4.3,2022/12/20,Dallas,134,145,1
+1045,Wireless Charger,Electronics,25.99,128,4.0,2023-03-10,Chicago,389,456,TRUE
+1046,Yoga Block Set,Sports,19.99,95,3.8,2023-01-28,New York,210,243,yes
+1047,Cast Iron Skillet,Kitchen,forty five dollars,55,4.6,2022-11-05,Seattle,176,198,true
+1048,Cordless Drill,Tools,129.99,38,4.7,2023-02-18,Denver,145,167,1
+1049,Bath Robe Luxury,Home,89.95,42,4.2,December 8 2022,Phoenix,98,115,TRUE
+1050,Smart Light Bulbs,Electronics,35.49,110,three point nine,2023-03-01,Chicago,256,301,yes
+1051,Beach Towel XL,Travel,22.99,150,3.8,2023-01-25,Miami,356,470,true
+1052,LED Desk Lamp,Home,thirty-nine ninety-five,85,4.1,2022-12-15,Boston,198,235,1
+1053,Protein Bar Pack,Health & Beauty,29.99,,3.6,2023-02-10,Los Angeles,385,421,TRUE
+1054,Action Camera,Electronics,249.99,32,4.8,2023/03/15,New York,125,168,yes
+1055,Cutting Board Set,Kitchen,45ABC.99,70,,2022-11-22,Dallas,167,201,true
+1056,Winter Gloves,Clothing,19.99,120,3.7,01-20-2023,Chicago,289,187,1
+1057,Facial Cleanser,Health & Beauty,24.95,94,4.2,2023-02-28,San Francisco,302,345,TRUE
+1058,USB-C Cable,Electronics,fourteen ninety nine,200,3.5,2022-12-01,Seattle,502,621,yes
+1059,Herb Garden Kit,Home,35.49,55,4.0,2023-01-15,,186,215,true
+1060,Cycling Helmet,Sports,59.99,48,four-point-three,2022-10-28,Denver,134,167,1
+1061,iPhone 14 Pro,Electronics,999.99,-5,4.9,2023-05-01,New York,0,0,TRUE
+1062,Smartphone Model ABC-123,Electronics,one thousand and fifty,null,5.01,31/02/2023,Online Store,-50,NaN,perhaps
+1063,Organic Cotton T-Shirt,Clothing,$49.99,inf,null,2023/13/01,Web,123.4,456.7,NULL
+1064,"Product with, comma",Kitchen,"199,99",1E3,4.8 stars,Yesterday,123 Main St.,10k,20k,2
+1065,Two hundred dollar item,Home,200$,100 units,N/A,TBA,"Boston, MA",+200,-100,pending
