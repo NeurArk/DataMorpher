@@ -74,6 +74,8 @@ report_dirty.md
 *.csv
 !requirements.txt
 !sample_report.md
+!sample_data/
+!sample_data/*.csv
 
 # OS specific
 .DS_Store

@@ -10,6 +10,7 @@ from pathlib import Path
 # Add parent directory to sys.path when running directly
 if __name__ == "__main__":
     import os
+
     # Get the absolute path of the parent directory
     parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     # Add to sys.path if not already there

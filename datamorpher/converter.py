@@ -6,7 +6,17 @@ from pathlib import Path
 from typing import Dict
 
 import pandas as pd
-from pandas.api.types import infer_dtype
+
+_DATE_FORMATS = [
+    "%Y-%m-%d",
+    "%d/%m/%Y",
+    "%m/%d/%Y",
+    "%Y/%m/%d",
+    "%d-%m-%Y",
+    "%m-%d-%Y",
+    "%B %d %Y",
+    "%d %B %Y",
+]
 
 
 class convert:
@@ -40,16 +50,50 @@ class convert:
     def detect_types(df: pd.DataFrame) -> Dict[str, str]:
         types: Dict[str, str] = {}
         for col in df.columns:
-            dtype = infer_dtype(df[col], skipna=True)
-            if dtype == "string" and _looks_like_date(df[col].astype(str)):
-                dtype = "date"
-            types[col] = dtype
+            types[col] = _infer_column_type(df, col)
         return types
 
 
 def _looks_like_date(series: pd.Series) -> bool:
     sample = series.dropna().astype(str).head(10)
     return sample.str.match(r"\d{4}-\d{2}-\d{2}").all()
+
+
+def _infer_column_type(df: pd.DataFrame, col_name: str) -> str:
+    """Infer a column's semantic type."""
+    series = df[col_name]
+    sample = series.dropna().astype(str).head(10)
+
+    if col_name.lower() in {"name", "product", "title", "description"}:
+        return "string"
+
+    bool_values = {
+        "true",
+        "false",
+        "yes",
+        "no",
+        "1",
+        "0",
+        "t",
+        "f",
+        "y",
+        "n",
+        "inactive",
+    }
+    if sample.str.lower().isin(bool_values).mean() > 0.5:
+        return "boolean"
+
+    for fmt in _DATE_FORMATS:
+        parsed = pd.to_datetime(sample, errors="coerce", format=fmt)
+        if parsed.notna().mean() > 0.5:
+            return "date"
+
+    if sample.str.match(r"^-?\d+(\.\d+)?$").mean() > 0.8:
+        if sample.str.contains("\.", regex=False).any():
+            return "floating"
+        return "integer"
+
+    return "string"
 
 
 def _read_json(path: Path) -> pd.DataFrame:
