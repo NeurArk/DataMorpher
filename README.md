@@ -136,6 +136,11 @@ The report also lists transformations applied, for example:
 - NaN -> 76166.67 (mean)
 ```
 
+## Sample Data
+
+A messy CSV file is included in `sample_data/messy_data.csv` to test the
+cleaning features and edge cases.
+
 ## Development
 
 ### Running Tests

@@ -30,36 +30,57 @@ def clean_data(df: pd.DataFrame) -> tuple[pd.DataFrame, Dict[str, object]]:
         dtype = infer_dtype(df[col], skipna=True)
         series = df[col]
         if dtype in {"string", "mixed"}:
+            bools = _normalize_booleans(series)
+            if bools.notna().sum() / max(series.notna().sum(), 1) >= 0.5:
+                df[col] = bools
+                dtype = "boolean"
+                series = df[col]
+        if dtype in {"string", "mixed"}:
             validated, invalid = _validate_numeric(
                 series, col, transformations
             )
             if validated is not None:
-                df[col] = validated
-                if invalid:
-                    info["invalid"][col] = invalid
-                dtype = "floating"
-            else:
+                ratio = validated.notna().sum() / max(series.notna().sum(), 1)
+                if ratio >= 0.5:
+                    df[col] = validated
+                    if invalid:
+                        info["invalid"][col] = invalid
+                    dtype = "floating"
+            if dtype in {"string", "mixed"}:
                 validated, invalid = _validate_dates(
                     series, column=col, transformations=transformations
                 )
                 if validated is not None:
-                    df[col] = validated
-                    if invalid:
-                        info["invalid"][col] = invalid
-                    dtype = "date"
+                    ratio = validated.notna().sum() / max(
+                        series.notna().sum(), 1
+                    )
+                    if ratio >= 0.5:
+                        df[col] = validated
+                        if invalid:
+                            info["invalid"][col] = invalid
+                        dtype = "date"
 
         if df[col].isna().any():
             if dtype in {"integer", "floating"}:
-                value = df[col].mean()
+                value = df[col].median()
                 df[col] = df[col].fillna(value)
-                info["imputed"][col] = "mean"
+                info["imputed"][col] = "median"
                 transformations.setdefault(col, []).append(
-                    f"NaN -> {value:.2f} (mean)"
+                    f"NaN -> {value:.2f} (median)"
                 )
-            elif dtype in {"string", "categorical", "boolean"}:
+            elif dtype in {"string", "categorical"}:
                 mode = df[col].mode(dropna=True)
                 if not mode.empty:
                     value = mode.iloc[0]
+                    df[col] = df[col].fillna(value)
+                    info["imputed"][col] = "mode"
+                    transformations.setdefault(col, []).append(
+                        f"NaN -> {value} (mode)"
+                    )
+            elif dtype == "boolean":
+                mode = df[col].mode(dropna=True)
+                if not mode.empty:
+                    value = bool(mode.iloc[0])
                     df[col] = df[col].fillna(value)
                     info["imputed"][col] = "mode"
                     transformations.setdefault(col, []).append(
@@ -116,6 +137,18 @@ def _words_to_num(text: str | None) -> float | None:
     return float(value)
 
 
+def _normalize_booleans(series: pd.Series) -> pd.Series:
+    """Normalize various boolean representations."""
+    true_values = {"true", "yes", "1", "t", "y"}
+    false_values = {"false", "no", "0", "f", "n", "inactive"}
+
+    lowercase = series.astype(str).str.lower()
+    result = pd.Series(index=series.index, dtype="object")
+    result[lowercase.isin(true_values)] = True
+    result[lowercase.isin(false_values)] = False
+    return result
+
+
 def _validate_numeric(
     series: pd.Series,
     column: str | None = None,
@@ -138,7 +171,7 @@ def _validate_numeric(
         extracted = (
             series.where(mask)
             .where(~series.str.contains(r"[/-]", na=False))
-            .str.extract(r"(\d+\.?\d*)")[0]
+            .str.extract(r"(\d+\.\d+|\d+)")[0]
         )
         extracted_numeric = pd.to_numeric(extracted, errors="coerce")
         if transformations is not None and column is not None:
@@ -149,6 +182,10 @@ def _validate_numeric(
         converted.update(extracted_numeric)
 
     if converted.notna().sum() == 0:
+        return None, 0
+
+    ratio = converted.notna().sum() / max(series.notna().sum(), 1)
+    if ratio < 0.5:
         return None, 0
 
     invalid = int((converted.isna() & series.notna()).sum())
@@ -164,7 +201,16 @@ def _validate_dates(
 ) -> tuple[pd.Series | None, int]:
     """Return series of ISO formatted dates if convertible."""
     if formats is None:
-        formats = ["%Y-%m-%d", "%d/%m/%Y", "%m/%d/%Y", "%Y/%m/%d"]
+        formats = [
+            "%Y-%m-%d",
+            "%d/%m/%Y",
+            "%m/%d/%Y",
+            "%Y/%m/%d",
+            "%d-%m-%Y",
+            "%m-%d-%Y",
+            "%B %d %Y",
+            "%d %B %Y",
+        ]
 
     parsed = pd.Series(pd.NaT, index=series.index)
     for fmt in formats:
@@ -172,6 +218,10 @@ def _validate_dates(
         parsed = parsed.fillna(parsed_try)
 
     if parsed.notna().sum() == 0:
+        return None, 0
+
+    ratio = parsed.notna().sum() / max(series.notna().sum(), 1)
+    if ratio < 0.5:
         return None, 0
 
     if transformations is not None and column is not None:
