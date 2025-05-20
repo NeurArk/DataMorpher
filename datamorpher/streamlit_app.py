@@ -3,15 +3,26 @@
 from __future__ import annotations
 
 import io
+import sys
 import time
 from pathlib import Path
+
+# Add parent directory to sys.path when running directly
+if __name__ == "__main__":
+    import os
+    # Get the absolute path of the parent directory
+    parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    # Add to sys.path if not already there
+    if parent_dir not in sys.path:
+        sys.path.insert(0, parent_dir)
 
 import pandas as pd
 import streamlit as st
 
-from .cleaner import clean_data
-from .converter import convert
-from .reporter import build_report
+# Import from datamorpher package
+from datamorpher.cleaner import clean_data
+from datamorpher.converter import convert
+from datamorpher.reporter import build_report
 
 st.set_page_config(page_title="DataMorpher")
 st.title("DataMorpher")
